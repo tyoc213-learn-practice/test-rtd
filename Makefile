@@ -28,3 +28,7 @@ up: ## up
 down: ## down
 	docker-compose down
 
+black:
+	docker-compose exec fastapi pip install black
+	docker-compose exec fastapi black -t py310 .
+
