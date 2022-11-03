@@ -27,5 +27,5 @@ class JugadorSueldoModel(BaseModel):
     equipo: str
 
 
-class JugadoresConSUeldo(BaseModel):
+class JugadoresConSueldo(BaseModel):
     jugadores: List[JugadorSueldoModel]
