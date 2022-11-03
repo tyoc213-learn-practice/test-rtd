@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.sueldo import router as api_router
 
+
 def get_application():
-    app = FastAPI(title="Phresh", version="1.0.0")
+    app = FastAPI(title="test_rtd", version="0.0.1")
 
     app.add_middleware(
         CORSMiddleware,
@@ -21,9 +22,7 @@ def get_application():
 
 app = get_application()
 
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-
-

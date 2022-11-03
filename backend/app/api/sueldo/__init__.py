@@ -7,4 +7,3 @@ router = APIRouter()
 
 
 router.include_router(sueldo_router, prefix="/sueldo", tags=["sueldo"])
-
