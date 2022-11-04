@@ -48,15 +48,14 @@ deploy-normal: ## Google deploy without all traffic usage `email=...@gmail.com p
 	gcloud config set project ${project}
 	gcloud config set app/promote_by_default false
 	gcloud config list
-	gcloud run deploy --port 8000
+	cd ./backend/;gcloud run deploy --port 8000
 
 deploy-production: ## google promoting all traffic to new version usage `email=...@gmail.com project=project-name make deploy-production`
-	cd backend
 	gcloud config set account ${email}
 	gcloud config set project ${project}
 	gcloud config set app/promote_by_default true
 	gcloud config list
-	gcloud run deploy --port 8000
+	cd ./backend/;gcloud run deploy --port 8000
 
 deploy: ## google deploy with default all
-	gcloud run deploy --port 8000
+	cd ./backend/;gcloud run deploy --port 8000
