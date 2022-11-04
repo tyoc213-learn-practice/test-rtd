@@ -5,7 +5,10 @@ client = TestClient(app)
 
 
 def test_post_sueldo_empty():
-    req_args = {"jugadores": []}
+    req_args = {
+        "jugadores": [],
+        "niveles": [{"nivel": "A", "goles_minimos": 5}],
+    }
     response = client.post("/api/sueldo/", json=req_args)
     assert response.status_code == 200
     assert {"jugadores": []} == response.json()
@@ -23,7 +26,13 @@ def test_post_sueldo_unico():
                 "sueldo_completo": None,
                 "equipo": "rojo",
             },
-        ]
+        ],
+        "niveles": [
+            {"nivel": "A", "goles_minimos": 5},
+            {"nivel": "B", "goles_minimos": 10},
+            {"nivel": "C", "goles_minimos": 15},
+            {"nivel": "Cuauh", "goles_minimos": 20},
+        ],
     }
     response = client.post("/api/sueldo/", json=req_args)
     assert response.status_code == 200
@@ -44,6 +53,12 @@ def test_post_sueldo_unico():
 
 def test_post_json_excel():
     req_args = {
+        "niveles": [
+            {"nivel": "A", "goles_minimos": 5},
+            {"nivel": "B", "goles_minimos": 10},
+            {"nivel": "C", "goles_minimos": 15},
+            {"nivel": "Cuauh", "goles_minimos": 20},
+        ],
         "jugadores": [
             {
                 "nombre": "Juan",
@@ -117,7 +132,7 @@ def test_post_json_excel():
                 "sueldo_completo": None,
                 "equipo": "azul",
             },
-        ]
+        ],
     }
     response = client.post("/api/sueldo/", json=req_args)
     assert response.status_code == 200
