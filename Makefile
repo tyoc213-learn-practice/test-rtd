@@ -25,8 +25,11 @@ down: ## Shutdown container
 sh: ## Shell into running container
 	docker-compose exec fastapi /bin/bash
 
-tests: ## Run tests on running current
+tests: ## Run tests on running container
 	docker-compose exec fastapi pytest tests
+
+tests-vvv: ## Run verbose tests on running container
+	docker-compose exec fastapi pytest -vvv tests
 
 black:  ## Apply black to code
 	docker-compose exec fastapi pip install black

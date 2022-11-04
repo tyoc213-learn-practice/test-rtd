@@ -13,15 +13,14 @@ from app.core.models.jugador_model import JugadorSueldoModel
 class PaymentCalculator:
     lista: Jugadores
     equivalencias: dict()
+    DEFAULT_MINIMO = 100
 
     def _reducir_goles(self, d, jugador: JugadorModel):
         """Por equipo acumula en `d` los goles actuales y esperados del `jugador`"""
         logging.debug(f"_reducir_goles({d, jugador})")
-        equivalencia = self.equivalencias[jugador.nivel]
+        equivalencia = self.equivalencias.get(jugador.nivel, self.DEFAULT_MINIMO)
         ju_ind = jugador.equipo not in d
-        pct_individual = round(
-            min(1.0, jugador.goles / self.equivalencias[jugador.nivel]), 4
-        )
+        pct_individual = round(min(1.0, jugador.goles / equivalencia), 4)
         d[jugador.equipo] = {
             "jugaron": 1 if ju_ind else d[jugador.equipo]["jugaron"] + 1,
             "total_pct": pct_individual
@@ -33,14 +32,13 @@ class PaymentCalculator:
     def _generar_elemento(self, jugador: JugadorModel, equipos):
         """Genera un `JugadorSueldoModel` teniendo los goles acumulados y esperados en los `equipos` del `jugador`"""
         logging.debug(f"_generar_elemento({jugador, equipos})")
-        equivalencia = self.equivalencias[jugador.nivel]
         pct_equipo = (
             equipos[jugador.equipo]["total_pct"] / equipos[jugador.equipo]["jugaron"]
         )
         completo = round(jugador.sueldo + pct_equipo * jugador.bono, 2)
         return JugadorSueldoModel(
             nombre=jugador.nombre,
-            goles_minimos=equivalencia,
+            goles_minimos=self.equivalencias.get(jugador.nivel, self.DEFAULT_MINIMO),
             goles=jugador.goles,
             sueldo=jugador.sueldo,
             bono=jugador.bono,
