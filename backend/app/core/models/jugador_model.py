@@ -23,7 +23,7 @@ class JugadorSueldoModel(BaseModel):
     goles: int
     sueldo: int
     bono: int
-    sueldo_completo: int
+    sueldo_completo: float
     equipo: str
 
 

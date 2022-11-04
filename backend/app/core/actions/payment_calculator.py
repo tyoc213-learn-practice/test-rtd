@@ -18,13 +18,15 @@ class PaymentCalculator:
         """Por equipo acumula en `d` los goles actuales y esperados del `jugador`"""
         logging.debug(f"_reducir_goles({d, jugador})")
         equivalencia = self.equivalencias[jugador.nivel]
+        ju_ind = jugador.equipo not in d
+        pct_individual = round(
+            min(1.0, jugador.goles / self.equivalencias[jugador.nivel]), 4
+        )
         d[jugador.equipo] = {
-            "goles": jugador.goles
-            if jugador.equipo not in d
-            else d[jugador.equipo]["goles"] + jugador.goles,
-            "esperado": equivalencia
-            if jugador.equipo not in d
-            else d[jugador.equipo]["esperado"] + equivalencia,
+            "jugaron": 1 if ju_ind else d[jugador.equipo]["jugaron"] + 1,
+            "total_pct": pct_individual
+            if ju_ind
+            else d[jugador.equipo]["total_pct"] + pct_individual,
         }
         return d
 
@@ -32,12 +34,10 @@ class PaymentCalculator:
         """Genera un `JugadorSueldoModel` teniendo los goles acumulados y esperados en los `equipos` del `jugador`"""
         logging.debug(f"_generar_elemento({jugador, equipos})")
         equivalencia = self.equivalencias[jugador.nivel]
-        pct_individual = min(1.0, jugador.goles / self.equivalencias[jugador.nivel])
-        pct_equipo = min(
-            1.0,
-            equipos[jugador.equipo]["goles"] / equipos[jugador.equipo]["esperado"],
+        pct_equipo = (
+            equipos[jugador.equipo]["total_pct"] / equipos[jugador.equipo]["jugaron"]
         )
-        completo = jugador.sueldo + (0.5 * (pct_individual + pct_equipo) * jugador.bono)
+        completo = round(jugador.sueldo + pct_equipo * jugador.bono, 2)
         return JugadorSueldoModel(
             nombre=jugador.nombre,
             goles_minimos=equivalencia,
