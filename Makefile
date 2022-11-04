@@ -10,25 +10,50 @@ help: ## This Help
 
 .PHONY: tests
 
-sh: ## shell into container
-	docker-compose exec fastapi /bin/bash
-
-tests: ## run tests on current
-	docker-compose exec fastapi pytest tests
-
-build: ## build
+build: ## Build container
 	docker-compose up -d --build
 
-upd: ## detached up
-	docker-compose up -d
-
-up: ## up
+up: ## Container up
 	docker-compose up
 
-down: ## down
+upd: ## Container detached up
+	docker-compose up -d
+
+down: ## Shutdown container
 	docker-compose down
 
-black:
+sh: ## Shell into running container
+	docker-compose exec fastapi /bin/bash
+
+tests: ## Run tests on running current
+	docker-compose exec fastapi pytest tests
+
+black:  ## Apply black to code
 	docker-compose exec fastapi pip install black
 	docker-compose exec fastapi black -t py310 .
 
+install-gcloud-linux: ## Google install gcloud components on Linux
+	sudo apt-get update && sudo apt-get install google-cloud-sdk google-cloud-sdk-app-engine-python
+	gcloud init
+
+upgrade-gcloud: ## Google upgrade gcloud components
+	gcloud components update
+
+deploy-normal: ## Google deploy without all traffic usage `email=...@gmail.com project=project-name make deploy`
+	cd backend
+	gcloud config set account ${email}
+	gcloud config set project ${project}
+	gcloud config set app/promote_by_default false
+	gcloud config list
+	gcloud run deploy --port 8000
+
+deploy-production: ## google promoting all traffic to new version usage `email=...@gmail.com project=project-name make deploy-production`
+	cd backend
+	gcloud config set account ${email}
+	gcloud config set project ${project}
+	gcloud config set app/promote_by_default true
+	gcloud config list
+	gcloud run deploy --port 8000
+
+deploy: ## google deploy with default all
+	gcloud run deploy --port 8000
